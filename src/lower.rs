@@ -1,9 +1,10 @@
 use super::analyze::Model;
-use syn::parse_quote;
+use syn::{parse_quote, Visibility};
 use syn::{Arm, Ident, Variant, Fields, Generics};
 
 #[cfg_attr(test, derive(Debug, PartialEq))]
 pub struct Ir {
+    pub visibility: Visibility,
     pub orig_enum_ident: Ident,
     pub orig_enum_generics: Generics,
     pub unit_enum_ident: Ident,
@@ -13,6 +14,7 @@ pub struct Ir {
 }
 
 pub fn lower(model: Model) -> Ir {
+    let visibility = model.visibility;
     let orig_enum_ident = model.orig_enum_ident;
     let orig_enum_generics = model.orig_enum_generics;
     let unit_enum_ident = model.unit_enum_ident;
@@ -32,6 +34,7 @@ pub fn lower(model: Model) -> Ir {
         }
     }).collect();
     Ir {
+        visibility,
         orig_enum_ident,
         orig_enum_generics,
         variants,
@@ -50,11 +53,13 @@ fn test_lower() {
     ];
 
     let derives = vec![parse_quote!(PartialEq)];
+    let visibility = parse_quote!(pub);
     let orig_enum_ident = parse_quote!(All);
     let orig_enum_generics = parse_quote!(<T>);
     let unit_enum_ident = parse_quote!(AllUnit);
 
     let model = Model {
+        visibility,
         variants,
         derives,
         orig_enum_ident,
@@ -72,6 +77,7 @@ fn test_lower() {
         parse_quote!(Struct),
     ];
 
+    let visibility = parse_quote!(pub);
     let orig_enum_ident = parse_quote!(All);
     let orig_enum_generics = parse_quote!(<T>);
 
@@ -84,6 +90,7 @@ fn test_lower() {
     ];
 
     let expected = Ir {
+        visibility,
         orig_enum_ident,
         orig_enum_generics,
         variants,

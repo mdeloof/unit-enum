@@ -1,11 +1,12 @@
 use proc_macro_error::abort;
 use quote::format_ident;
-use syn::{Generics, Ident, ItemEnum, Lit, Meta, NestedMeta, Variant};
+use syn::{Generics, Ident, ItemEnum, Lit, Meta, NestedMeta, Variant, Visibility};
 
 #[cfg_attr(test, derive(Debug, PartialEq))]
 pub struct Model {
     pub variants: Vec<Variant>,
     pub derives: Vec<Ident>,
+    pub visibility: Visibility,
     pub orig_enum_ident: Ident,
     pub orig_enum_generics: Generics,
     pub unit_enum_ident: Ident,
@@ -15,6 +16,7 @@ pub fn analyze(item_enum: ItemEnum) -> Model {
     let variants: Vec<Variant> = item_enum.variants.into_iter().collect();
     let orig_enum_ident = item_enum.ident;
     let orig_enum_generics = item_enum.generics;
+    let visibility = item_enum.vis;
 
     let metas: Vec<Meta> = item_enum
         .attrs
@@ -80,6 +82,7 @@ pub fn analyze(item_enum: ItemEnum) -> Model {
         orig_enum_generics,
         variants,
         derives,
+        visibility,
         orig_enum_ident,
         unit_enum_ident,
     }
@@ -91,7 +94,7 @@ fn test_analyze() {
 
     let item_enum = parse_quote!(
         #[unit_enum(name = "AllUnit", derive(PartialEq))]
-        enum _All<T> {
+        pub enum _All<T> {
             Unit,
             Tuple(bool, i32),
             Struct { x: T, y: T },
@@ -107,6 +110,7 @@ fn test_analyze() {
     ];
 
     let derives = vec![parse_quote!(PartialEq)];
+    let visibility = parse_quote!(pub);
     let orig_enum_ident = parse_quote!(_All);
     let orig_enum_generics = parse_quote!(<T>);
     let unit_enum_ident = parse_quote!(AllUnit);
@@ -114,6 +118,7 @@ fn test_analyze() {
     let expected = Model {
         variants,
         derives,
+        visibility,
         orig_enum_ident,
         orig_enum_generics,
         unit_enum_ident,

@@ -1,6 +1,6 @@
 # unit-enum
 
-From an existing enum, derive a unit `enum` where none of the
+From an existing `enum`, derive a unit `enum` where none of the
 variants have any fields.
 
 ```rust

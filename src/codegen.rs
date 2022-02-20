@@ -4,6 +4,7 @@ use quote::quote;
 use super::lower::Ir;
 
 pub fn codegen(ir: Ir) -> TokenStream {
+    let visibility = ir.visibility;
     let orig_enum_ident = ir.orig_enum_ident;
     let orig_enum_generics = ir.orig_enum_generics;
     let unit_enum_ident = ir.unit_enum_ident;
@@ -13,7 +14,7 @@ pub fn codegen(ir: Ir) -> TokenStream {
 
     let tokens = quote!(
         #[derive(#(#derives),*)]
-        enum #unit_enum_ident {
+        #visibility enum #unit_enum_ident {
             #(#variants),*
         }
 
@@ -33,6 +34,7 @@ pub fn codegen(ir: Ir) -> TokenStream {
 fn test_codegen() {
     use syn::{parse2, parse_quote, File};
 
+    let visibility = parse_quote!(pub);
     let orig_enum_ident = parse_quote!(State);
     let orig_enum_generics = parse_quote!(<>);
     let unit_enum_ident = parse_quote!(StateUnit);
@@ -44,6 +46,7 @@ fn test_codegen() {
     ];
 
     let ir = Ir {
+        visibility,
         orig_enum_ident,
         orig_enum_generics,
         unit_enum_ident,

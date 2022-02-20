@@ -4,7 +4,7 @@ use unit_enum::UnitEnum;
 
 #[derive(UnitEnum)]
 #[unit_enum(name = "AllType", derive(Clone, Copy, PartialEq, Debug))]
-enum All<T> {
+pub enum All<T> {
     Unit,
     Tuple(bool, i32),
     Struct { x: T, y: T },
