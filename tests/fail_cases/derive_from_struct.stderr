@@ -1,0 +1,11 @@
+error: item is not an enum
+
+         = help: `ItemEnum` can only be derived from an enum
+
+ --> tests/fail_cases/derive_from_struct.rs:4:1
+  |
+4 | / struct Vec2 {
+5 | |     x: i32,
+6 | |     y: i32,
+7 | | }
+  | |_^
